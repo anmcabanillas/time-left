@@ -25,17 +25,21 @@
       }
     }
 
-    body {
-      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    html, body {
+      margin: 0; 
+      padding: 1rem;
+      max-width: 100%;
+      overflow-x: hidden;
       background: var(--notion-bg);
       color: var(--notion-text);
-      margin: 2rem auto;
-      max-width: 500px;
-      padding: 1rem;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
       font-size: 16px;
-      position: relative;
-      min-height: 350px;
       box-sizing: border-box;
+      height: 100vh;
+    }
+
+    *, *:before, *:after {
+      box-sizing: inherit;
     }
 
     .progress-group {
@@ -44,7 +48,6 @@
       transform: translateY(10px);
       animation: fadeInUp 0.6s ease-out forwards;
     }
-
     .progress-group:nth-child(2) { animation-delay: 0.1s; }
     .progress-group:nth-child(3) { animation-delay: 0.2s; }
     .progress-group:nth-child(4) { animation-delay: 0.3s; }
@@ -59,179 +62,114 @@
     .progress-bar-container {
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.5rem;
     }
 
     .progress-bar {
       background: var(--notion-progress-bg);
-      border-radius: 6px;
-      height: 8px;
+      border-radius: 4px;
+      height: 6px;
       overflow: hidden;
       border: 1px solid var(--notion-border);
-      width: 100%;
-      flex-shrink: 0;
+      flex-grow: 1;
+      min-width: 0;
       position: relative;
     }
 
     .progress-bar-fill {
       background: var(--notion-progress-fill);
       height: 100%;
-      border-radius: 6px;
+      border-radius: 4px;
       width: 0%;
       transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .progress-bar:hover::after {
-      content: attr(data-tooltip);
-      position: absolute;
-      top: -26px;
-      right: 0;
-      background: var(--notion-progress-fill);
-      color: var(--notion-bg);
-      font-size: 12px;
-      padding: 4px 8px;
-      border-radius: 4px;
-      white-space: nowrap;
-      pointer-events: none;
-      z-index: 10;
-    }
-
     .progress-info {
       color: var(--notion-subtext);
-      font-size: 16px;
+      font-size: 12px;
+      width: 65px;
       flex-shrink: 0;
-      width: 80px;
       text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 600;
     }
 
-    /* Contenedor del ícono */
     .settings-container {
       position: fixed;
-      bottom: 16px;
-      right: 16px;
-      z-index: 10;
-      font-size: 0; /* Quitar espacios blancos */
-      max-width: calc(100% - 32px);
+      bottom: 8px;
+      right: 8px;
+      z-index: 100;
     }
 
-    /* Botón minimalista */
     .settings-button {
       background: var(--notion-progress-fill);
       border: none;
       border-radius: 50%;
-      width: 40px;
-      height: 40px;
+      width: 32px;
+      height: 32px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       color: var(--notion-bg);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-      transition: background-color 0.3s ease, transform 0.3s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      transition: background-color 0.3s ease;
+      font-size: 18px;
+      user-select: none;
     }
-
     .settings-button:hover {
-      background: #555;
-      transform: scale(1.1);
+      background-color: #555;
     }
 
-    /* Panel desplegable con animación */
     .settings-panel {
-      position: absolute;
-      bottom: 50px;
-      right: 0;
+      position: fixed;
+      bottom: 42px;
+      right: 8px;
       background: var(--notion-bg);
       border: 1px solid var(--notion-border);
-      border-radius: 8px;
-      padding: 12px 16px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      width: 220px;
+      border-radius: 6px;
+      padding: 8px 12px;
+      width: 180px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+      font-size: 13px;
       color: var(--notion-text);
-
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(10px);
-      transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
-      pointer-events: none;
-      font-size: 14px;
       box-sizing: border-box;
-      z-index: 20;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(8px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      white-space: nowrap;
+      user-select: none;
+      z-index: 200;
     }
 
     .settings-panel.show {
       opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
       pointer-events: auto;
+      transform: translateY(0);
+      user-select: auto;
     }
 
     .settings-panel label {
       display: block;
-      margin-bottom: 6px;
+      margin-bottom: 4px;
       font-weight: 600;
     }
 
     .settings-panel input[type="date"] {
       width: 100%;
-      padding: 6px 8px;
-      font-size: 14px;
+      font-size: 13px;
+      padding: 4px 6px;
       border: 1px solid var(--notion-border);
       border-radius: 4px;
       background: var(--notion-bg);
       color: var(--notion-text);
       outline-offset: 2px;
-      transition: border-color 0.3s ease;
       box-sizing: border-box;
+      cursor: pointer;
     }
-
-    .settings-panel input[type="date"]:focus {
-      border-color: var(--notion-progress-fill);
-    }
-
-    /* --- Responsive --- */
-
-    @media (max-width: 600px) {
-      body {
-        max-width: 100%;
-        margin: 1rem;
-        font-size: 14px;
-      }
-
-      .progress-info {
-        width: 60px;
-        font-size: 14px;
-      }
-
-      .settings-panel {
-        width: 90vw; /* casi toda la pantalla */
-        max-width: 300px;
-        right: auto;
-        left: 50%;
-        transform: translate(-50%, 10px);
-        border-radius: 10px;
-        bottom: 60px;
-      }
-
-      .settings-panel.show {
-        transform: translate(-50%, 0);
-      }
-
-      .settings-button {
-        width: 36px;
-        height: 36px;
-      }
-    }
-
-    @media (max-width: 350px) {
-      .settings-panel {
-        padding: 10px 12px;
-        font-size: 13px;
-      }
-      .settings-panel input[type="date"] {
-        font-size: 13px;
-      }
-    }
-
   </style>
 </head>
 <body>
@@ -272,19 +210,18 @@
   </div>
 
   <div class="settings-container">
-    <button class="settings-button" id="toggleSettings" aria-label="Ajustar fecha de nacimiento" title="Ajustar fecha de nacimiento">
-      <!-- Ícono de engranaje SVG -->
-      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    <button class="settings-button" id="toggleSettingsBtn" aria-label="Cambiar fecha de nacimiento">
+      ⚙️
     </button>
-    <div class="settings-panel" id="settingsPanel">
+    <div class="settings-panel" id="settingsPanel" aria-hidden="true">
       <label for="birthDateInput">Fecha de nacimiento:</label>
       <input type="date" id="birthDateInput" max="" />
     </div>
   </div>
 
   <script>
-    const esperanzaVida = 80;
     let fechaNacimiento = '2003-06-14';
+    const esperanzaVida = 80;
 
     const dayProgress = document.getElementById('dayProgress');
     const monthProgress = document.getElementById('monthProgress');
@@ -296,14 +233,13 @@
     const yearInfo = document.getElementById('yearInfo');
     const lifeInfo = document.getElementById('lifeInfo');
 
-    const birthDateInput = document.getElementById('birthDateInput');
+    const toggleSettingsBtn = document.getElementById('toggleSettingsBtn');
     const settingsPanel = document.getElementById('settingsPanel');
-    const toggleSettingsBtn = document.getElementById('toggleSettings');
+    const birthDateInput = document.getElementById('birthDateInput');
 
-    // Inicializa input con fecha de nacimiento y limita a hoy o antes
     function setMaxDate() {
-      const todayStr = new Date().toISOString().split('T')[0];
-      birthDateInput.max = todayStr;
+      const today = new Date().toISOString().split('T')[0];
+      birthDateInput.setAttribute('max', today);
       birthDateInput.value = fechaNacimiento;
     }
 
@@ -311,70 +247,78 @@
       const ahora = new Date();
       const nacimiento = new Date(fechaNacimiento);
 
+      // Progreso día
       const inicioDia = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate(), 0, 0, 0);
       const finDia = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate(), 23, 59, 59);
       const porcentajeDia = ((ahora - inicioDia) / (finDia - inicioDia)) * 100;
 
+      // Progreso mes
       const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
       const finMes = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0, 23, 59, 59);
       const porcentajeMes = ((ahora - inicioMes) / (finMes - inicioMes)) * 100;
 
+      // Progreso año
       const inicioAño = new Date(ahora.getFullYear(), 0, 1);
       const finAño = new Date(ahora.getFullYear(), 11, 31, 23, 59, 59);
       const porcentajeAño = ((ahora - inicioAño) / (finAño - inicioAño)) * 100;
 
-      const edadEnMs = ahora - nacimiento;
-      const msPorAno = 365.25 * 24 * 60 * 60 * 1000;
-      const edad = edadEnMs / msPorAno;
-      const porcentajeVida = (edad / esperanzaVida) * 100;
+      // Progreso vida
+      const finVida = new Date(nacimiento);
+      finVida.setFullYear(finVida.getFullYear() + esperanzaVida);
+      const porcentajeVida = ((ahora - nacimiento) / (finVida - nacimiento)) * 100;
 
-      dayProgress.style.width = porcentajeDia.toFixed(2) + '%';
-      dayProgress.setAttribute('data-tooltip', porcentajeDia.toFixed(2) + '% día transcurrido');
-      dayInfo.textContent = Math.floor(porcentajeDia) + '% día';
+      // Actualizar barras y texto con números redondos y etiquetas
+      dayProgress.style.width = Math.min(Math.max(porcentajeDia, 0), 100) + '%';
+      dayInfo.textContent = `Día: ${Math.round(porcentajeDia)}%`;
 
-      monthProgress.style.width = porcentajeMes.toFixed(2) + '%';
-      monthProgress.setAttribute('data-tooltip', porcentajeMes.toFixed(2) + '% mes transcurrido');
-      monthInfo.textContent = Math.floor(porcentajeMes) + '% mes';
+      monthProgress.style.width = Math.min(Math.max(porcentajeMes, 0), 100) + '%';
+      monthInfo.textContent = `Mes: ${Math.round(porcentajeMes)}%`;
 
-      yearProgress.style.width = porcentajeAño.toFixed(2) + '%';
-      yearProgress.setAttribute('data-tooltip', porcentajeAño.toFixed(2) + '% año transcurrido');
-      yearInfo.textContent = Math.floor(porcentajeAño) + '% año';
+      yearProgress.style.width = Math.min(Math.max(porcentajeAño, 0), 100) + '%';
+      yearInfo.textContent = `Año: ${Math.round(porcentajeAño)}%`;
 
-      lifeProgress.style.width = Math.min(porcentajeVida, 100).toFixed(2) + '%';
-      lifeProgress.setAttribute('data-tooltip', porcentajeVida.toFixed(2) + '% vida transcurrida');
-      lifeInfo.textContent = Math.floor(porcentajeVida) + '% vida';
+      if (porcentajeVida > 100) {
+        lifeProgress.style.width = '100%';
+        lifeInfo.textContent = 'Vida: 100%';
+      } else if (porcentajeVida < 0) {
+        lifeProgress.style.width = '0%';
+        lifeInfo.textContent = 'Vida: 0%';
+      } else {
+        lifeProgress.style.width = porcentajeVida + '%';
+        lifeInfo.textContent = `Vida: ${Math.round(porcentajeVida)}%`;
+      }
     }
 
-    // Toggle panel settings
     toggleSettingsBtn.addEventListener('click', () => {
-      settingsPanel.classList.toggle('show');
       if (settingsPanel.classList.contains('show')) {
-        birthDateInput.focus();
-      }
-    });
-
-    // Cierra el panel al hacer clic fuera
-    document.addEventListener('click', (e) => {
-      if (!settingsPanel.contains(e.target) && !toggleSettingsBtn.contains(e.target)) {
         settingsPanel.classList.remove('show');
+        settingsPanel.setAttribute('aria-hidden', 'true');
+      } else {
+        settingsPanel.classList.add('show');
+        settingsPanel.setAttribute('aria-hidden', 'false');
       }
     });
 
-    // Actualizar fecha al cambiar input
     birthDateInput.addEventListener('change', () => {
-      if (birthDateInput.value && birthDateInput.value <= new Date().toISOString().split('T')[0]) {
+      if (birthDateInput.value) {
         fechaNacimiento = birthDateInput.value;
         actualizarProgreso();
       }
     });
 
-    // Inicializar
+    document.addEventListener('click', (e) => {
+      if (!settingsPanel.contains(e.target) && e.target !== toggleSettingsBtn) {
+        settingsPanel.classList.remove('show');
+        settingsPanel.setAttribute('aria-hidden', 'true');
+      }
+    });
+
     setMaxDate();
     actualizarProgreso();
-    // Actualiza cada 10 segundos para animar el progreso del día
-    setInterval(actualizarProgreso, 10000);
 
+    setInterval(actualizarProgreso, 1000);
   </script>
 </body>
 </html>
+
 
