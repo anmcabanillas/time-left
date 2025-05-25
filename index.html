@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Progreso de Vida - Estilo Notion</title>
   <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
     :root {
       --notion-bg: #ffffff;
       --notion-text: #1f1f1f;
@@ -32,18 +36,26 @@
       }
     }
 
-    body {
+    html, body {
+      margin: 0;
+      padding: 0;
       font-family: var(--notion-btn-font);
       background: var(--notion-bg);
       color: var(--notion-text);
-      margin: 2rem auto;
-      max-width: 460px;
-      padding: 0 1rem;
       font-size: 16px;
+      width: 100%;
+      overflow-x: hidden;
+    }
+
+    body {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      max-width: 100%;
     }
 
     .progress-group {
-      margin-bottom: 0.25rem;
       opacity: 0;
       transform: translateY(10px);
       animation: fadeInUp 0.6s ease-out forwards;
@@ -64,6 +76,7 @@
       display: flex;
       align-items: center;
       gap: 0.75rem;
+      width: 100%;
     }
 
     .progress-bar {
@@ -72,9 +85,9 @@
       height: 8px;
       overflow: hidden;
       border: 1px solid var(--notion-border);
-      width: 100%;
-      flex-shrink: 0;
+      flex-grow: 1;
       position: relative;
+      min-width: 0;
     }
 
     .progress-bar-fill {
@@ -114,7 +127,6 @@
       text-align: center;
       white-space: nowrap;
       box-shadow: 0 0 3px var(--notion-btn-shadow);
-      transition: background-color 0.2s ease, border-color 0.2s ease;
       font-family: var(--notion-btn-font);
     }
 
@@ -144,6 +156,14 @@
       border-radius: 5px;
       background: var(--notion-progress-bg);
       color: var(--notion-text);
+    }
+
+    @media (max-width: 400px) {
+      .progress-info-btn {
+        width: 80px;
+        font-size: 13px;
+        padding: 4px 0;
+      }
     }
   </style>
 </head>
@@ -244,6 +264,7 @@
   </script>
 </body>
 </html>
+
 
 
 
