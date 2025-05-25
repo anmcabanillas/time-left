@@ -35,6 +35,7 @@
       font-size: 16px;
       position: relative;
       min-height: 350px;
+      box-sizing: border-box;
     }
 
     .progress-group {
@@ -91,6 +92,8 @@
       padding: 4px 8px;
       border-radius: 4px;
       white-space: nowrap;
+      pointer-events: none;
+      z-index: 10;
     }
 
     .progress-info {
@@ -108,6 +111,7 @@
       right: 16px;
       z-index: 10;
       font-size: 0; /* Quitar espacios blancos */
+      max-width: calc(100% - 32px);
     }
 
     /* Botón minimalista */
@@ -150,6 +154,8 @@
       transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
       pointer-events: none;
       font-size: 14px;
+      box-sizing: border-box;
+      z-index: 20;
     }
 
     .settings-panel.show {
@@ -175,11 +181,57 @@
       color: var(--notion-text);
       outline-offset: 2px;
       transition: border-color 0.3s ease;
+      box-sizing: border-box;
     }
 
     .settings-panel input[type="date"]:focus {
       border-color: var(--notion-progress-fill);
     }
+
+    /* --- Responsive --- */
+
+    @media (max-width: 600px) {
+      body {
+        max-width: 100%;
+        margin: 1rem;
+        font-size: 14px;
+      }
+
+      .progress-info {
+        width: 60px;
+        font-size: 14px;
+      }
+
+      .settings-panel {
+        width: 90vw; /* casi toda la pantalla */
+        max-width: 300px;
+        right: auto;
+        left: 50%;
+        transform: translate(-50%, 10px);
+        border-radius: 10px;
+        bottom: 60px;
+      }
+
+      .settings-panel.show {
+        transform: translate(-50%, 0);
+      }
+
+      .settings-button {
+        width: 36px;
+        height: 36px;
+      }
+    }
+
+    @media (max-width: 350px) {
+      .settings-panel {
+        padding: 10px 12px;
+        font-size: 13px;
+      }
+      .settings-panel input[type="date"] {
+        font-size: 13px;
+      }
+    }
+
   </style>
 </head>
 <body>
@@ -271,57 +323,4 @@
       const finAño = new Date(ahora.getFullYear(), 11, 31, 23, 59, 59);
       const porcentajeAño = ((ahora - inicioAño) / (finAño - inicioAño)) * 100;
 
-      const edadEnMs = ahora - nacimiento;
-      const esperanzaEnMs = esperanzaVida * 365.25 * 24 * 60 * 60 * 1000;
-      const porcentajeVidaVivida = (edadEnMs / esperanzaEnMs) * 100;
-
-      function actualizar(idBarra, idTexto, valor, barId, tooltip) {
-        const barra = document.getElementById(idBarra);
-        const texto = document.getElementById(idTexto);
-        const contenedor = document.getElementById(barId);
-        barra.style.width = Math.min(Math.max(valor, 0), 100) + '%';
-        contenedor.setAttribute('data-tooltip', tooltip);
-        const nombre = idTexto.replace('Info', '');
-        const etiqueta = {
-          day: 'Día',
-          month: 'Mes',
-          year: 'Año',
-          life: 'Vida'
-        }[nombre] || nombre;
-        texto.textContent = `${etiqueta}: ${Math.round(valor)}%`;
-      }
-
-      actualizar('dayProgress', 'dayInfo', porcentajeDia, 'dayProgressBar', `${Math.floor(porcentajeDia)}% del día transcurrido`);
-      actualizar('monthProgress', 'monthInfo', porcentajeMes, 'monthProgressBar', `${Math.floor(porcentajeMes)}% del mes transcurrido`);
-      actualizar('yearProgress', 'yearInfo', porcentajeAño, 'yearProgressBar', `${Math.floor(porcentajeAño)}% del año transcurrido`);
-      actualizar('lifeProgress', 'lifeInfo', porcentajeVidaVivida, 'lifeProgressBar', `${Math.floor(porcentajeVidaVivida)}% de vida vivida`);
-    }
-
-    // Alternar visibilidad del panel con animación
-    toggleSettingsBtn.addEventListener('click', () => {
-      settingsPanel.classList.toggle('show');
-    });
-
-    // Cerrar panel si haces clic fuera
-    document.addEventListener('click', (e) => {
-      if (!settingsPanel.contains(e.target) && !toggleSettingsBtn.contains(e.target)) {
-        settingsPanel.classList.remove('show');
-      }
-    });
-
-    // Actualizar fecha de nacimiento al cambiar input
-    birthDateInput.addEventListener('change', (e) => {
-      const val = e.target.value;
-      if (val && new Date(val) <= new Date()) {
-        fechaNacimiento = val;
-        actualizarProgreso();
-      }
-    });
-
-    // Inicializar
-    setMaxDate();
-    actualizarProgreso();
-  </script>
-</body>
-</html>
-
+      const edadEnMs =
