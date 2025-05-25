@@ -12,6 +12,10 @@
       --notion-border: #d3d1cb;
       --notion-progress-bg: #f1f1ef;
       --notion-progress-fill: #37352f;
+      --notion-btn-bg: #fff;
+      --notion-btn-border: #d3d1cb;
+      --notion-btn-hover-bg: #f1f1ef;
+      --notion-btn-shadow: rgba(0,0,0,0.05);
     }
 
     @media (prefers-color-scheme: dark) {
@@ -22,24 +26,22 @@
         --notion-border: #3f3f3f;
         --notion-progress-bg: #2c2c2c;
         --notion-progress-fill: #ffffff;
+        --notion-btn-bg: #2c2c2c;
+        --notion-btn-border: #3f3f3f;
+        --notion-btn-hover-bg: #3f3f3f;
+        --notion-btn-shadow: rgba(255,255,255,0.05);
       }
     }
 
-    html, body {
-      margin: 0; 
-      padding: 1rem;
-      max-width: 100%;
-      overflow-x: hidden;
+    body {
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
       background: var(--notion-bg);
       color: var(--notion-text);
-      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      margin: 2rem auto;
+      max-width: 250px; /* reducido a la mitad */
+      padding: 1rem;
       font-size: 16px;
-      box-sizing: border-box;
-      height: 100vh;
-    }
-
-    *, *:before, *:after {
-      box-sizing: inherit;
+      user-select: none;
     }
 
     .progress-group {
@@ -48,6 +50,7 @@
       transform: translateY(10px);
       animation: fadeInUp 0.6s ease-out forwards;
     }
+
     .progress-group:nth-child(2) { animation-delay: 0.1s; }
     .progress-group:nth-child(3) { animation-delay: 0.2s; }
     .progress-group:nth-child(4) { animation-delay: 0.3s; }
@@ -62,113 +65,104 @@
     .progress-bar-container {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.75rem;
     }
 
     .progress-bar {
       background: var(--notion-progress-bg);
-      border-radius: 4px;
-      height: 6px;
+      border-radius: 6px;
+      height: 8px;
       overflow: hidden;
       border: 1px solid var(--notion-border);
-      flex-grow: 1;
-      min-width: 0;
+      width: 100%;
+      flex-shrink: 0;
       position: relative;
     }
 
     .progress-bar-fill {
       background: var(--notion-progress-fill);
       height: 100%;
-      border-radius: 4px;
+      border-radius: 6px;
       width: 0%;
       transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    .progress-info {
-      color: var(--notion-subtext);
-      font-size: 12px;
-      width: 65px;
+    .progress-info-btn {
+      font-size: 16px;
+      padding: 4px 12px;
+      border-radius: 6px;
+      border: 1.5px solid var(--notion-btn-border);
+      background: var(--notion-btn-bg);
+      color: var(--notion-text);
+      cursor: default;
+      user-select: none;
       flex-shrink: 0;
+      min-width: 80px;
       text-align: left;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-weight: 600;
+      box-shadow: 0 0 3px var(--notion-btn-shadow);
+      transition: background-color 0.2s ease, border-color 0.2s ease;
+    }
+    /* Solo el botón de Vida es interactivo */
+    .progress-info-btn.life {
+      background: var(--notion-progress-fill);
+      color: var(--notion-bg);
+      cursor: pointer;
+      user-select: auto;
+      border-color: var(--notion-progress-fill);
+      box-shadow: none;
+    }
+    .progress-info-btn.life:hover {
+      background: #000;
+      border-color: #000;
     }
 
-    .settings-container {
+    /* El resto no cambia cursor al hover */
+    .progress-info-btn:not(.life):hover {
+      background: var(--notion-btn-bg);
+      border-color: var(--notion-btn-border);
+      cursor: default;
+      box-shadow: 0 0 3px var(--notion-btn-shadow);
+    }
+
+    /* Panel configuración */
+    #settingsPanel {
       position: fixed;
-      bottom: 8px;
-      right: 8px;
+      bottom: 12px;
+      right: 12px;
+      background: var(--notion-bg);
+      border: 1.5px solid var(--notion-border);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 14px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      width: 220px;
+      max-width: 90vw;
+      display: none;
       z-index: 100;
     }
-
-    .settings-button {
-      background: var(--notion-progress-fill);
-      border: none;
-      border-radius: 50%;
-      width: 32px;
-      height: 32px;
-      cursor: pointer;
-      color: var(--notion-bg);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-      transition: background-color 0.3s ease;
-      font-size: 18px;
-      user-select: none;
-    }
-    .settings-button:hover {
-      background-color: #555;
-    }
-
-    .settings-panel {
-      position: fixed;
-      bottom: 42px;
-      right: 8px;
-      background: var(--notion-bg);
-      border: 1px solid var(--notion-border);
-      border-radius: 6px;
-      padding: 8px 12px;
-      width: 180px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
-      font-size: 13px;
-      color: var(--notion-text);
-      box-sizing: border-box;
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(8px);
-      transition: opacity 0.2s ease, transform 0.2s ease;
-      white-space: nowrap;
-      user-select: none;
-      z-index: 200;
-    }
-
-    .settings-panel.show {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translateY(0);
-      user-select: auto;
-    }
-
-    .settings-panel label {
+    #settingsPanel.show {
       display: block;
-      margin-bottom: 4px;
-      font-weight: 600;
     }
-
-    .settings-panel input[type="date"] {
+    #settingsPanel label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--notion-subtext);
+    }
+    #settingsPanel input[type="date"] {
       width: 100%;
-      font-size: 13px;
-      padding: 4px 6px;
-      border: 1px solid var(--notion-border);
-      border-radius: 4px;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1.5px solid var(--notion-border);
+      font-size: 14px;
       background: var(--notion-bg);
       color: var(--notion-text);
       outline-offset: 2px;
-      box-sizing: border-box;
-      cursor: pointer;
+      transition: border-color 0.2s ease;
+    }
+    #settingsPanel input[type="date"]:focus {
+      border-color: var(--notion-progress-fill);
+      outline: none;
     }
   </style>
 </head>
@@ -178,7 +172,7 @@
       <div class="progress-bar" id="dayProgressBar">
         <div class="progress-bar-fill" id="dayProgress"></div>
       </div>
-      <div class="progress-info" id="dayInfo"></div>
+      <button class="progress-info-btn" id="dayInfo" aria-label="Porcentaje del día"></button>
     </div>
   </div>
 
@@ -187,7 +181,7 @@
       <div class="progress-bar" id="monthProgressBar">
         <div class="progress-bar-fill" id="monthProgress"></div>
       </div>
-      <div class="progress-info" id="monthInfo"></div>
+      <button class="progress-info-btn" id="monthInfo" aria-label="Porcentaje del mes"></button>
     </div>
   </div>
 
@@ -196,7 +190,7 @@
       <div class="progress-bar" id="yearProgressBar">
         <div class="progress-bar-fill" id="yearProgress"></div>
       </div>
-      <div class="progress-info" id="yearInfo"></div>
+      <button class="progress-info-btn" id="yearInfo" aria-label="Porcentaje del año"></button>
     </div>
   </div>
 
@@ -205,18 +199,13 @@
       <div class="progress-bar" id="lifeProgressBar">
         <div class="progress-bar-fill" id="lifeProgress"></div>
       </div>
-      <div class="progress-info" id="lifeInfo"></div>
+      <button class="progress-info-btn life" id="lifeInfo" aria-label="Porcentaje de vida"></button>
     </div>
   </div>
 
-  <div class="settings-container">
-    <button class="settings-button" id="toggleSettingsBtn" aria-label="Cambiar fecha de nacimiento">
-      ⚙️
-    </button>
-    <div class="settings-panel" id="settingsPanel" aria-hidden="true">
-      <label for="birthDateInput">Fecha de nacimiento:</label>
-      <input type="date" id="birthDateInput" max="" />
-    </div>
+  <div id="settingsPanel" aria-hidden="true">
+    <label for="birthDateInput">Fecha de nacimiento:</label>
+    <input type="date" id="birthDateInput" max="" />
   </div>
 
   <script>
@@ -233,13 +222,15 @@
     const yearInfo = document.getElementById('yearInfo');
     const lifeInfo = document.getElementById('lifeInfo');
 
-    const toggleSettingsBtn = document.getElementById('toggleSettingsBtn');
     const settingsPanel = document.getElementById('settingsPanel');
     const birthDateInput = document.getElementById('birthDateInput');
 
     function setMaxDate() {
-      const today = new Date().toISOString().split('T')[0];
-      birthDateInput.setAttribute('max', today);
+      const hoy = new Date();
+      const yyyy = hoy.getFullYear();
+      const mm = (hoy.getMonth() + 1).toString().padStart(2, '0');
+      const dd = hoy.getDate().toString().padStart(2, '0');
+      birthDateInput.max = `${yyyy}-${mm}-${dd}`;
       birthDateInput.value = fechaNacimiento;
     }
 
@@ -289,7 +280,7 @@
       }
     }
 
-    toggleSettingsBtn.addEventListener('click', () => {
+    lifeInfo.addEventListener('click', () => {
       if (settingsPanel.classList.contains('show')) {
         settingsPanel.classList.remove('show');
         settingsPanel.setAttribute('aria-hidden', 'true');
@@ -300,14 +291,16 @@
     });
 
     birthDateInput.addEventListener('change', () => {
-      if (birthDateInput.value) {
-        fechaNacimiento = birthDateInput.value;
+      const val = birthDateInput.value;
+      if (val) {
+        fechaNacimiento = val;
         actualizarProgreso();
       }
     });
 
+    // Cerrar panel si se hace clic fuera de él y del botón vida
     document.addEventListener('click', (e) => {
-      if (!settingsPanel.contains(e.target) && e.target !== toggleSettingsBtn) {
+      if (!settingsPanel.contains(e.target) && e.target !== lifeInfo) {
         settingsPanel.classList.remove('show');
         settingsPanel.setAttribute('aria-hidden', 'true');
       }
@@ -315,10 +308,11 @@
 
     setMaxDate();
     actualizarProgreso();
-
-    setInterval(actualizarProgreso, 1000);
+    // Actualiza cada 15 segundos para suavizar
+    setInterval(actualizarProgreso, 15000);
   </script>
 </body>
 </html>
+
 
 
