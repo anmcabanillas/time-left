@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Barra de Progreso de Vida</title>
+<title>Barra de Progreso de Vida - Estilo Notion</title>
 <style>
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
@@ -16,7 +16,7 @@
   h1 {
     font-weight: 600;
     font-size: 1.5rem;
-    margin-bottom: 1.2rem;
+    margin-bottom: 1.5rem;
   }
   .progress-group {
     margin-bottom: 1.5rem;
@@ -24,26 +24,29 @@
   .progress-label {
     font-weight: 600;
     font-size: 0.9rem;
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.4rem;
+    color: #37352f; /* tono texto Notion */
   }
   .progress-bar {
-    background: #eee;
-    border-radius: 9999px;
-    height: 16px;
+    background: #e7e6e1; /* gris claro Notion */
+    border-radius: 12px;
+    height: 14px;
     width: 100%;
     overflow: hidden;
+    box-shadow: inset 0 1px 2px rgb(255 255 255 / 0.7);
   }
   .progress-bar-fill {
-    background: #0070f3;
+    background: #4f46e5; /* azul índigo Notion */
     height: 100%;
-    border-radius: 9999px;
+    border-radius: 12px;
     width: 0%;
-    transition: width 0.4s ease;
+    transition: width 0.5s ease;
+    box-shadow: 0 0 8px #6366f1;
   }
   .progress-info {
     font-size: 0.8rem;
-    color: #555;
-    margin-top: 0.2rem;
+    color: #78716c; /* gris texto Notion */
+    margin-top: 0.3rem;
   }
 </style>
 </head>
@@ -52,11 +55,11 @@
 <h1>Progreso de Vida</h1>
 
 <div class="progress-group">
-  <div class="progress-label">Años vividos</div>
+  <div class="progress-label">Días vividos este mes</div>
   <div class="progress-bar">
-    <div class="progress-bar-fill" id="yearProgress"></div>
+    <div class="progress-bar-fill" id="dayProgress"></div>
   </div>
-  <div class="progress-info" id="yearInfo"></div>
+  <div class="progress-info" id="dayInfo"></div>
 </div>
 
 <div class="progress-group">
@@ -68,52 +71,69 @@
 </div>
 
 <div class="progress-group">
-  <div class="progress-label">Días vividos este mes</div>
+  <div class="progress-label">Años vividos</div>
   <div class="progress-bar">
-    <div class="progress-bar-fill" id="dayProgress"></div>
+    <div class="progress-bar-fill" id="yearProgress"></div>
   </div>
-  <div class="progress-info" id="dayInfo"></div>
+  <div class="progress-info" id="yearInfo"></div>
+</div>
+
+<div class="progress-group">
+  <div class="progress-label">Vida total</div>
+  <div class="progress-bar">
+    <div class="progress-bar-fill" id="lifeProgress"></div>
+  </div>
+  <div class="progress-info" id="lifeInfo"></div>
 </div>
 
 <script>
-  // Parámetros de entrada (similares al widget original)
-  const fechaNacimiento = '1990-01-01'; // Cambia a la fecha real
-  const edadEsperada = 85; // Cambia según lo que desees
+  const fechaNacimiento = '1990-01-01'; // Cambia aquí
+  const esperanzaVida = 85; // Cambia aquí
 
-  function calcularProgreso() {
+  function actualizarProgreso() {
     const hoy = new Date();
     const nacimiento = new Date(fechaNacimiento);
+
+    // Días vividos este mes
+    const diasMesActual = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
+    const diasVividosMes = hoy.getDate();
+    const porcentajeDias = (diasVividosMes / diasMesActual) * 100;
+
+    // Meses vividos este año (1 a 12)
+    const mesesVividos = hoy.getMonth() + 1;
+    const porcentajeMeses = (mesesVividos / 12) * 100;
 
     // Años vividos
     let añosVividos = hoy.getFullYear() - nacimiento.getFullYear();
     const cumpleEsteAño = new Date(hoy.getFullYear(), nacimiento.getMonth(), nacimiento.getDate());
     if (hoy < cumpleEsteAño) añosVividos--;
 
-    // Porcentaje total vida
-    let porcentajeVida = Math.min((añosVividos / edadEsperada) * 100, 100);
+    const porcentajeAños = (añosVividos / esperanzaVida) * 100;
 
-    // Meses vividos este año
-    let mesesVividos = hoy.getMonth() + 1; // Enero = 0, sumamos 1
-    let porcentajeMeses = (mesesVividos / 12) * 100;
+    // Vida total (días vividos / días esperados)
+    const diasVividosTotales = Math.floor((hoy - nacimiento) / (1000 * 60 * 60 * 24));
+    const diasEsperadosTotales = esperanzaVida * 365.25;
+    const porcentajeVidaTotal = (diasVividosTotales / diasEsperadosTotales) * 100;
 
-    // Días vividos este mes
-    let diasVividos = hoy.getDate();
-    const diasMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
-    let porcentajeDias = (diasVividos / diasMes) * 100;
+    // Actualizar barras y textos
+    document.getElementById('dayProgress').style.width = porcentajeDias.toFixed(2) + '%';
+    document.getElementById('dayInfo').textContent = `${diasVividosMes} de ${diasMesActual} días vividos este mes`;
 
-    // Actualizar barras
-    document.getElementById('yearProgress').style.width = porcentajeVida + '%';
-    document.getElementById('yearInfo').textContent = `${añosVividos} años vividos de ${edadEsperada} (${porcentajeVida.toFixed(2)}%)`;
-
-    document.getElementById('monthProgress').style.width = porcentajeMeses + '%';
+    document.getElementById('monthProgress').style.width = porcentajeMeses.toFixed(2) + '%';
     document.getElementById('monthInfo').textContent = `${mesesVividos} de 12 meses vividos este año`;
 
-    document.getElementById('dayProgress').style.width = porcentajeDias + '%';
-    document.getElementById('dayInfo').textContent = `${diasVividos} de ${diasMes} días vividos este mes`;
+    document.getElementById('yearProgress').style.width = porcentajeAños.toFixed(2) + '%';
+    document.getElementById('yearInfo').textContent = `${añosVividos} años vividos de ${esperanzaVida}`;
+
+    document.getElementById('lifeProgress').style.width = porcentajeVidaTotal.toFixed(2) + '%';
+    document.getElementById('lifeInfo').textContent = `Has vivido ${diasVividosTotales} de ${Math.floor(diasEsperadosTotales)} días totales (${porcentajeVidaTotal.toFixed(2)}%)`;
   }
 
-  calcularProgreso();
+  actualizarProgreso();
 </script>
+
+</body>
+</html>
 
 </body>
 </html>
