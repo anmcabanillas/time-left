@@ -1,140 +1,327 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Barra de Progreso de Vida - Estilo Notion</title>
-<style>
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-      Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-    background: #fff;
-    color: #111;
-    margin: 2rem auto;
-    max-width: 420px;
-  }
-  h1 {
-    font-weight: 600;
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-  .progress-group {
-    margin-bottom: 1.5rem;
-  }
-  .progress-label {
-    font-weight: 600;
-    font-size: 0.9rem;
-    margin-bottom: 0.4rem;
-    color: #37352f; /* tono texto Notion */
-  }
-  .progress-bar {
-    background: #e7e6e1; /* gris claro Notion */
-    border-radius: 12px;
-    height: 14px;
-    width: 100%;
-    overflow: hidden;
-    box-shadow: inset 0 1px 2px rgb(255 255 255 / 0.7);
-  }
-  .progress-bar-fill {
-    background: #4f46e5; /* azul índigo Notion */
-    height: 100%;
-    border-radius: 12px;
-    width: 0%;
-    transition: width 0.5s ease;
-    box-shadow: 0 0 8px #6366f1;
-  }
-  .progress-info {
-    font-size: 0.8rem;
-    color: #78716c; /* gris texto Notion */
-    margin-top: 0.3rem;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Barra de Progreso de Vida - Estilo Notion</title>
+  <style>
+    :root {
+      --notion-bg: #ffffff;
+      --notion-text: #1f1f1f;
+      --notion-subtext: #6e6d7a;
+      --notion-border: #d3d1cb;
+      --notion-progress-bg: #f1f1ef;
+      --notion-progress-fill: #37352f;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --notion-bg: #1e1e1e;
+        --notion-text: #ffffff;
+        --notion-subtext: #a3a3a3;
+        --notion-border: #3f3f3f;
+        --notion-progress-bg: #2c2c2c;
+        --notion-progress-fill: #ffffff;
+      }
+    }
+
+    body {
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      background: var(--notion-bg);
+      color: var(--notion-text);
+      margin: 2rem auto;
+      max-width: 500px;
+      padding: 1rem;
+      font-size: 16px;
+      position: relative;
+      min-height: 350px;
+    }
+
+    .progress-group {
+      margin-bottom: 0.25rem;
+      opacity: 0;
+      transform: translateY(10px);
+      animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    .progress-group:nth-child(2) { animation-delay: 0.1s; }
+    .progress-group:nth-child(3) { animation-delay: 0.2s; }
+    .progress-group:nth-child(4) { animation-delay: 0.3s; }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .progress-bar-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .progress-bar {
+      background: var(--notion-progress-bg);
+      border-radius: 6px;
+      height: 8px;
+      overflow: hidden;
+      border: 1px solid var(--notion-border);
+      width: 100%;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .progress-bar-fill {
+      background: var(--notion-progress-fill);
+      height: 100%;
+      border-radius: 6px;
+      width: 0%;
+      transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .progress-bar:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      top: -26px;
+      right: 0;
+      background: var(--notion-progress-fill);
+      color: var(--notion-bg);
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .progress-info {
+      color: var(--notion-subtext);
+      font-size: 16px;
+      flex-shrink: 0;
+      width: 80px;
+      text-align: left;
+    }
+
+    /* Contenedor del ícono */
+    .settings-container {
+      position: fixed;
+      bottom: 16px;
+      right: 16px;
+      z-index: 10;
+      font-size: 0; /* Quitar espacios blancos */
+    }
+
+    /* Botón minimalista */
+    .settings-button {
+      background: var(--notion-progress-fill);
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--notion-bg);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .settings-button:hover {
+      background: #555;
+      transform: scale(1.1);
+    }
+
+    /* Panel desplegable con animación */
+    .settings-panel {
+      position: absolute;
+      bottom: 50px;
+      right: 0;
+      background: var(--notion-bg);
+      border: 1px solid var(--notion-border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 220px;
+      color: var(--notion-text);
+
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px);
+      transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+      pointer-events: none;
+      font-size: 14px;
+    }
+
+    .settings-panel.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .settings-panel label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .settings-panel input[type="date"] {
+      width: 100%;
+      padding: 6px 8px;
+      font-size: 14px;
+      border: 1px solid var(--notion-border);
+      border-radius: 4px;
+      background: var(--notion-bg);
+      color: var(--notion-text);
+      outline-offset: 2px;
+      transition: border-color 0.3s ease;
+    }
+
+    .settings-panel input[type="date"]:focus {
+      border-color: var(--notion-progress-fill);
+    }
+  </style>
 </head>
 <body>
-
-<h1>Progreso de Vida</h1>
-
-<div class="progress-group">
-  <div class="progress-label">Días vividos este mes</div>
-  <div class="progress-bar">
-    <div class="progress-bar-fill" id="dayProgress"></div>
+  <div class="progress-group">
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="dayProgressBar">
+        <div class="progress-bar-fill" id="dayProgress"></div>
+      </div>
+      <div class="progress-info" id="dayInfo"></div>
+    </div>
   </div>
-  <div class="progress-info" id="dayInfo"></div>
-</div>
 
-<div class="progress-group">
-  <div class="progress-label">Meses vividos este año</div>
-  <div class="progress-bar">
-    <div class="progress-bar-fill" id="monthProgress"></div>
+  <div class="progress-group">
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="monthProgressBar">
+        <div class="progress-bar-fill" id="monthProgress"></div>
+      </div>
+      <div class="progress-info" id="monthInfo"></div>
+    </div>
   </div>
-  <div class="progress-info" id="monthInfo"></div>
-</div>
 
-<div class="progress-group">
-  <div class="progress-label">Años vividos</div>
-  <div class="progress-bar">
-    <div class="progress-bar-fill" id="yearProgress"></div>
+  <div class="progress-group">
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="yearProgressBar">
+        <div class="progress-bar-fill" id="yearProgress"></div>
+      </div>
+      <div class="progress-info" id="yearInfo"></div>
+    </div>
   </div>
-  <div class="progress-info" id="yearInfo"></div>
-</div>
 
-<div class="progress-group">
-  <div class="progress-label">Vida total</div>
-  <div class="progress-bar">
-    <div class="progress-bar-fill" id="lifeProgress"></div>
+  <div class="progress-group">
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="lifeProgressBar">
+        <div class="progress-bar-fill" id="lifeProgress"></div>
+      </div>
+      <div class="progress-info" id="lifeInfo"></div>
+    </div>
   </div>
-  <div class="progress-info" id="lifeInfo"></div>
-</div>
 
-<script>
-  const fechaNacimiento = '1990-01-01'; // Cambia aquí
-  const esperanzaVida = 85; // Cambia aquí
+  <div class="settings-container">
+    <button class="settings-button" id="toggleSettings" aria-label="Ajustar fecha de nacimiento" title="Ajustar fecha de nacimiento">
+      <!-- Ícono de engranaje SVG -->
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h.09a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h.09a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.09a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+    <div class="settings-panel" id="settingsPanel">
+      <label for="birthDateInput">Fecha de nacimiento:</label>
+      <input type="date" id="birthDateInput" max="" />
+    </div>
+  </div>
 
-  function actualizarProgreso() {
-    const hoy = new Date();
-    const nacimiento = new Date(fechaNacimiento);
+  <script>
+    const esperanzaVida = 80;
+    let fechaNacimiento = '2003-06-14';
 
-    // Días vividos este mes
-    const diasMesActual = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
-    const diasVividosMes = hoy.getDate();
-    const porcentajeDias = (diasVividosMes / diasMesActual) * 100;
+    const dayProgress = document.getElementById('dayProgress');
+    const monthProgress = document.getElementById('monthProgress');
+    const yearProgress = document.getElementById('yearProgress');
+    const lifeProgress = document.getElementById('lifeProgress');
 
-    // Meses vividos este año (1 a 12)
-    const mesesVividos = hoy.getMonth() + 1;
-    const porcentajeMeses = (mesesVividos / 12) * 100;
+    const dayInfo = document.getElementById('dayInfo');
+    const monthInfo = document.getElementById('monthInfo');
+    const yearInfo = document.getElementById('yearInfo');
+    const lifeInfo = document.getElementById('lifeInfo');
 
-    // Años vividos
-    let añosVividos = hoy.getFullYear() - nacimiento.getFullYear();
-    const cumpleEsteAño = new Date(hoy.getFullYear(), nacimiento.getMonth(), nacimiento.getDate());
-    if (hoy < cumpleEsteAño) añosVividos--;
+    const birthDateInput = document.getElementById('birthDateInput');
+    const settingsPanel = document.getElementById('settingsPanel');
+    const toggleSettingsBtn = document.getElementById('toggleSettings');
 
-    const porcentajeAños = (añosVividos / esperanzaVida) * 100;
+    // Inicializa input con fecha de nacimiento y limita a hoy o antes
+    function setMaxDate() {
+      const todayStr = new Date().toISOString().split('T')[0];
+      birthDateInput.max = todayStr;
+      birthDateInput.value = fechaNacimiento;
+    }
 
-    // Vida total (días vividos / días esperados)
-    const diasVividosTotales = Math.floor((hoy - nacimiento) / (1000 * 60 * 60 * 24));
-    const diasEsperadosTotales = esperanzaVida * 365.25;
-    const porcentajeVidaTotal = (diasVividosTotales / diasEsperadosTotales) * 100;
+    function actualizarProgreso() {
+      const ahora = new Date();
+      const nacimiento = new Date(fechaNacimiento);
 
-    // Actualizar barras y textos
-    document.getElementById('dayProgress').style.width = porcentajeDias.toFixed(2) + '%';
-    document.getElementById('dayInfo').textContent = `${diasVividosMes} de ${diasMesActual} días vividos este mes`;
+      const inicioDia = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate(), 0, 0, 0);
+      const finDia = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate(), 23, 59, 59);
+      const porcentajeDia = ((ahora - inicioDia) / (finDia - inicioDia)) * 100;
 
-    document.getElementById('monthProgress').style.width = porcentajeMeses.toFixed(2) + '%';
-    document.getElementById('monthInfo').textContent = `${mesesVividos} de 12 meses vividos este año`;
+      const inicioMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+      const finMes = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0, 23, 59, 59);
+      const porcentajeMes = ((ahora - inicioMes) / (finMes - inicioMes)) * 100;
 
-    document.getElementById('yearProgress').style.width = porcentajeAños.toFixed(2) + '%';
-    document.getElementById('yearInfo').textContent = `${añosVividos} años vividos de ${esperanzaVida}`;
+      const inicioAño = new Date(ahora.getFullYear(), 0, 1);
+      const finAño = new Date(ahora.getFullYear(), 11, 31, 23, 59, 59);
+      const porcentajeAño = ((ahora - inicioAño) / (finAño - inicioAño)) * 100;
 
-    document.getElementById('lifeProgress').style.width = porcentajeVidaTotal.toFixed(2) + '%';
-    document.getElementById('lifeInfo').textContent = `Has vivido ${diasVividosTotales} de ${Math.floor(diasEsperadosTotales)} días totales (${porcentajeVidaTotal.toFixed(2)}%)`;
-  }
+      const edadEnMs = ahora - nacimiento;
+      const esperanzaEnMs = esperanzaVida * 365.25 * 24 * 60 * 60 * 1000;
+      const porcentajeVidaVivida = (edadEnMs / esperanzaEnMs) * 100;
 
-  actualizarProgreso();
-</script>
+      function actualizar(idBarra, idTexto, valor, barId, tooltip) {
+        const barra = document.getElementById(idBarra);
+        const texto = document.getElementById(idTexto);
+        const contenedor = document.getElementById(barId);
+        barra.style.width = Math.min(Math.max(valor, 0), 100) + '%';
+        contenedor.setAttribute('data-tooltip', tooltip);
+        const nombre = idTexto.replace('Info', '');
+        const etiqueta = {
+          day: 'Día',
+          month: 'Mes',
+          year: 'Año',
+          life: 'Vida'
+        }[nombre] || nombre;
+        texto.textContent = `${etiqueta}: ${Math.round(valor)}%`;
+      }
 
-</body>
-</html>
+      actualizar('dayProgress', 'dayInfo', porcentajeDia, 'dayProgressBar', `${Math.floor(porcentajeDia)}% del día transcurrido`);
+      actualizar('monthProgress', 'monthInfo', porcentajeMes, 'monthProgressBar', `${Math.floor(porcentajeMes)}% del mes transcurrido`);
+      actualizar('yearProgress', 'yearInfo', porcentajeAño, 'yearProgressBar', `${Math.floor(porcentajeAño)}% del año transcurrido`);
+      actualizar('lifeProgress', 'lifeInfo', porcentajeVidaVivida, 'lifeProgressBar', `${Math.floor(porcentajeVidaVivida)}% de vida vivida`);
+    }
 
+    // Alternar visibilidad del panel con animación
+    toggleSettingsBtn.addEventListener('click', () => {
+      settingsPanel.classList.toggle('show');
+    });
+
+    // Cerrar panel si haces clic fuera
+    document.addEventListener('click', (e) => {
+      if (!settingsPanel.contains(e.target) && !toggleSettingsBtn.contains(e.target)) {
+        settingsPanel.classList.remove('show');
+      }
+    });
+
+    // Actualizar fecha de nacimiento al cambiar input
+    birthDateInput.addEventListener('change', (e) => {
+      const val = e.target.value;
+      if (val && new Date(val) <= new Date()) {
+        fechaNacimiento = val;
+        actualizarProgreso();
+      }
+    });
+
+    // Inicializar
+    setMaxDate();
+    actualizarProgreso();
+  </script>
 </body>
 </html>
 
