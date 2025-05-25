@@ -323,4 +323,58 @@
       const finAño = new Date(ahora.getFullYear(), 11, 31, 23, 59, 59);
       const porcentajeAño = ((ahora - inicioAño) / (finAño - inicioAño)) * 100;
 
-      const edadEnMs =
+      const edadEnMs = ahora - nacimiento;
+      const msPorAno = 365.25 * 24 * 60 * 60 * 1000;
+      const edad = edadEnMs / msPorAno;
+      const porcentajeVida = (edad / esperanzaVida) * 100;
+
+      dayProgress.style.width = porcentajeDia.toFixed(2) + '%';
+      dayProgress.setAttribute('data-tooltip', porcentajeDia.toFixed(2) + '% día transcurrido');
+      dayInfo.textContent = Math.floor(porcentajeDia) + '% día';
+
+      monthProgress.style.width = porcentajeMes.toFixed(2) + '%';
+      monthProgress.setAttribute('data-tooltip', porcentajeMes.toFixed(2) + '% mes transcurrido');
+      monthInfo.textContent = Math.floor(porcentajeMes) + '% mes';
+
+      yearProgress.style.width = porcentajeAño.toFixed(2) + '%';
+      yearProgress.setAttribute('data-tooltip', porcentajeAño.toFixed(2) + '% año transcurrido');
+      yearInfo.textContent = Math.floor(porcentajeAño) + '% año';
+
+      lifeProgress.style.width = Math.min(porcentajeVida, 100).toFixed(2) + '%';
+      lifeProgress.setAttribute('data-tooltip', porcentajeVida.toFixed(2) + '% vida transcurrida');
+      lifeInfo.textContent = Math.floor(porcentajeVida) + '% vida';
+    }
+
+    // Toggle panel settings
+    toggleSettingsBtn.addEventListener('click', () => {
+      settingsPanel.classList.toggle('show');
+      if (settingsPanel.classList.contains('show')) {
+        birthDateInput.focus();
+      }
+    });
+
+    // Cierra el panel al hacer clic fuera
+    document.addEventListener('click', (e) => {
+      if (!settingsPanel.contains(e.target) && !toggleSettingsBtn.contains(e.target)) {
+        settingsPanel.classList.remove('show');
+      }
+    });
+
+    // Actualizar fecha al cambiar input
+    birthDateInput.addEventListener('change', () => {
+      if (birthDateInput.value && birthDateInput.value <= new Date().toISOString().split('T')[0]) {
+        fechaNacimiento = birthDateInput.value;
+        actualizarProgreso();
+      }
+    });
+
+    // Inicializar
+    setMaxDate();
+    actualizarProgreso();
+    // Actualiza cada 10 segundos para animar el progreso del día
+    setInterval(actualizarProgreso, 10000);
+
+  </script>
+</body>
+</html>
+
